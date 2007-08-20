@@ -2,7 +2,7 @@
 /*
 Plugin Name: SPS-Suite
 Plugin URI: http://www.hobbingen.de/software/
-Description: Suite for Enhancing your 'static' pages and archives. Use the admin panel to activate the functions! This plugin is based on 'Sidebar Page Switcher'.'
+Description: Suite for Enhancing your 'static' pages and archives. Use the admin panel to activate the functions! This plugin is based on 'Sidebar Page Switcher'.
 Author: Thorsten Werner
 Version: 1.2.1
 Author URI: http://www.hobbingen.de/software/
