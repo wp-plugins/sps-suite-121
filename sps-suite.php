@@ -2,9 +2,9 @@
 /*
 Plugin Name: SPS-Suite
 Plugin URI: http://www.hobbingen.de/software/
-Description: Suite for Enhancing your 'static' pages and archives. Use the admin panel to activate the functions! This plugin is based on 'Sidebar Page Switcher'.
+Description: Suite for Enhancing your 'static' pages and archives. Use the admin panel to activate the functions! This plugin is based on 'Sidebar Page Switcher'.'
 Author: Thorsten Werner
-Version: 1.2.1
+Version: 1.3.0
 Author URI: http://www.hobbingen.de/software/
 */
 /*
@@ -58,7 +58,7 @@ if ( "de_DE" == WPLANG ) {
 		"LA" => "SPS - Archivliste",
 		"LAText" => "Diese Funktion erweitert Deine Archivliste. Wenn Du eine Limit w&auml;hlst, dann wird das Archiv beschr&auml;nkt, aber alle Jahre werden zu&auml;tzlich angezeigt. Optional kannst Du noch ein Prefix f&uuml;r die Jahreszahlen aus&auml;hlen. Damit l&auml;sst sich eine kurze Archivliste realisieren, die trotzdem kompletten Zugriff auf alle Beitr&auml;ge erm&ouml;glicht.",
 		"LAUsage" => "Benutze Archivliste",
-		"LAUsageText" => "Ersetze die Funktion &quot;wp_get_archives&quot; mit &quot;sps_get_archives&quot; in Deinem Theme.",
+		"LAUsageText" => "Nutze das Widget &quot;SPS - Archivliste&quot; oder ersetze &quot;wp_get_archives&quot; mit &quot;sps_get_archives&quot; im Theme.",
 		"LADatePrefix" => "Archiv Jahresprefix",
 		"LADatePrefixText" => "Dieses Prefix wird vor der Jahreszahl eingeblendet, w&auml;hle aus.",
 		"Notes" => "Beachte: Dieses Plugin wird unter der GNU-Lizenz f&uuml;r freie offenen Software (GPL V2) ver&ouml;ffentlicht. Besuche <a href=\"http://www.gnu.org\">www.gnu.org</a> f&uuml;r weitere Informationen. <br/>Dies Plugin wurde zudem f&uuml;r die Deutsche Tolkien Gesellschaft e.V.(<a href=\"http://www.tolkiengesellschaft.de\">www.tolkiengesellschaft.de</a>) erdacht und programmiert, um eine kleine und &uuml;bersichtliche Sidebar zu erhalten. <br /> F&uuml;hle Dich frei dieses Plugin weiter zu verbessern, aber lasse mich dieses h&ouml;ren. Ich bin auch an weiteren &Uuml;bersetzungen interessiert. <br /> Dieses Plugin basiert auf SPS - Sidebar Page Switcher von Thorsten Werner, &uuml;berarbeitet von Volkmar Kantor.",
@@ -104,7 +104,7 @@ if ( "de_DE" == WPLANG ) {
 		"LA" => "SPS - List Archives",
 		"LAText" => "This function enhances your archives listings. If you limit your archive only the limited number of archive links are shown, but additionally all the years. Optionally you may add a prefix to the years. This may help to have a small archive-list in the sidebar, but enables your users to have accesss to all archives.",
 		"LAUsage" => "Use List Archives",
-		"LAUsageText" => "Replace the function &quot;wp_get_archives&quot; with &quot;sps_get_archives&quot; in your theme.",
+		"LAUsageText" => "Use the widget &quot;SPS - Archive List&quot; or replace &quot;wp_get_archives&quot; with &quot;sps_get_archives&quot; in your theme.",
 		"LADatePrefix" => "Archive Year Prefix",
 		"LADatePrefixText" => "This prefix is displayed before the date, please select.",
 		"Notes" => "Please note: This plugin is released under the GNU-license for free open-source software (GPL V2). Visit <a href=\"http://www.gnu.org\">www.gnu.org</a> for further information. <br />This plugin was intentionally programmed for the German Tolkien society (<a href=\"http://www.tolkiengesellschaft.de\">www.tolkiengesellschaft.de</a>) to have some convinient modifications for a small and clearly arranged sidebar. <br />Feel free to use or improve this plugin, but let me hear of it. I am also interested in new translations. <br />This plugin is based on SPS - Sidebar page Switcher by Thorsten Werner, improved by Volkmar Kantor.",
@@ -598,11 +598,60 @@ function sps_options() {
     <small>
     	<?php print $sps_lang["Notes"]; ?>
     </small>
-    <p><a href="http://www.hobbingen.de/software">Plugin Homepage</a></p>
+    <p><a href="http://www.hobbingen.de/software">Plugin Homepage</a> <a href="http://wordpress.org/extend/plugins/sps-suite-121/">Wordpress.org-Plugins</a></p>
   </div>
   <?php
 }
 
+/* Widget for Archive-Function of SPS */
+///*
+function sps_widget_archives($args) {
+	extract($args);
+	$options = get_option('sps_widget_archives');
+	$c = $options['count'] ? '1' : '0';
+	$l = empty($options['limit']) ? '0' : $options['limit'];
+	$title = empty($options['title']) ? __('Archives') : $options['title'];
+?>
+		<?php echo $before_widget; ?>
+			<?php echo $before_title . $title . $after_title; ?>
+			<ul>
+			<?php sps_get_archives("type=monthly&limit=$l&show_post_count=$c"); ?>
+			</ul>
+		<?php echo $after_widget; ?>
+<?php
+}
+
+function sps_widget_archives_control() {
+	$options = $newoptions = get_option('sps_widget_archives');
+	if ( $_POST["sps-archives-submit"] ) {
+		$newoptions['count'] = isset($_POST['sps-archives-count']);
+		$newoptions['limit'] = $_POST['sps-archives-limit'];
+		$newoptions['title'] = strip_tags(stripslashes($_POST["sps-archives-title"]));
+	}
+	if ( $options != $newoptions ) {
+		$options = $newoptions;
+		update_option('sps_widget_archives', $options);
+	}
+	$count = $options['count'] ? 'checked="checked"' : '';
+	$limit = $options['limit'];
+	$title = htmlspecialchars($options['title'], ENT_QUOTES);
+?>
+			<p><label for="sps-archives-title"><?php _e('Title:'); ?> <input style="width: 250px;" id="archives-title" name="sps-archives-title" type="text" value="<?php echo $title; ?>" /></label></p>
+			<p style="text-align:right;margin-right:40px;"><label for="sps-archives-count">Show post counts <input class="checkbox" type="checkbox" <?php echo $count; ?> id="sps-archives-count" name="sps-archives-count" /></label></p>
+			<p><label for="sps-archives-limit">Limit display to <input class="text" type="text" value="<?php echo $limit; ?>" id="sps-archives-limit" name="sps-archives-limit" /></label></p>
+			<input type="hidden" id="sps-archives-submit" name="sps-archives-submit" value="1" />
+<?php
+}
+
+function sps_load_widgets() {
+global $sps_lang;
+if ( function_exists('register_sidebar_widget') ) {
+	register_sidebar_widget($sps_lang['LA'], 'sps_widget_archives');
+}	
+if ( function_exists('register_widget_control') ) {
+	register_widget_control($sps_lang['LA'], 'sps_widget_archives_control', 300, 110);
+}
+}
 /* Actions and Filters for Wordpress */
 /* Sidebar Page Switcher */
 add_action('edit_page_form', 'sps_admin_edit_page');
@@ -612,5 +661,9 @@ add_filter('wp_list_pages_excludes', 'sps_pages_2_exclude', 1);
 add_filter('posts_request', 'sps_ssp_change_request', 1);
 /* Administration Form */
 add_action('admin_menu', 'sps_adminpage');
+/* Load widgets after all plugins are loaded! */
+add_action('plugins_loaded', 'sps_load_widgets');
+
+
 
 ?>
