@@ -4,7 +4,7 @@ Plugin Name: SPS-Suite
 Plugin URI: http://www.hobbingen.de/software/
 Description: Suite for Enhancing your 'static' pages and archives. Use the admin panel to activate the functions! This plugin is based on 'Sidebar Page Switcher'.'
 Author: Thorsten Werner
-Version: 1.3.0
+Version: 1.3.1
 Author URI: http://www.hobbingen.de/software/
 */
 /*
@@ -43,6 +43,8 @@ if ( "de_DE" == WPLANG ) {
 		"SPSUsageText" => "Wenn diese Funktion aktiviert wird, dann werden versteckte Seiten ausgeblendet.",
 		"SPSHierarchy" => "Benutze die Hierarchiefunktion",		
 		"SPSHierarchyText" => "Es werden nur die hierarchisch notwendige Seiten und die Haupteben angezeigt.",
+		"SPSTrimBreaks" => "L&ouml;sche Umbr&uuml;che und Tabstops",
+		"SPSTrimBreaksText" => "Es werden alle Umbr&uuml;che und Tabstops aus 1. der Seitenliste, 2. der SPS-Archivliste und der 3. Kategorieliste abgefangen und gel&ouml;scht. Dies verhindert Fehler bei der Darstellung von Listen im Internet Explorer. Solltest Du im IEx Probleme mit der Listendarstellung haben, dann aktiviere diese Option.",
 		"SPSMinUserLevel" => "Niedrigste Benutzerrolle",
 		"SPSMinUserLevelText" => "Benutzer ein Ziffer; 5 = Herausgeber, 8 = Administrator. Dies ist eine Sicherheitsfunktion!",
 		"SSP" => "SPS - Suche in Seiten",
@@ -89,6 +91,8 @@ if ( "de_DE" == WPLANG ) {
 		"SPSUsageText" => "If you activate this, then all hidden page are hidden.",
 		"SPSHierarchy" => "Usage of the hierarchy-funktion.",		
 		"SPSHierarchyText" => "If activated, WP displays only the hierarchically useful pages in the sidebar.",
+		"SPSTrimBreaks" => "Delete Breaks and Tabs",
+		"SPSTrimBreaksText" => "Every break and every tab in 1st the page-list, 2nd the sps-archive-list and 3rd the categroies-list will be deleted. This may avoid some presention-errors in the Internet Explorer . If you expierence any strange behavior with your theme in the IEx you should activate this option.",
 		"SPSMinUserLevel" => "Minimum User Level",
 		"SPSMinUserLevelText" => "Use a digit, i.e. 5 = Editor, 8 = Administrator. This is a security feature!",
 		"SSP" => "SPS - Search Static Pages",
@@ -183,6 +187,17 @@ function sps_pages_2_exclude($exclusions)
 	/* Return exclusions */
 	return $exclusions;
 } 
+/* Trim Spaces cause IEx is idiotic! */
+function sps_trim_breaks($post){
+	/* Trim spaces if wanted */
+	if (1 == get_option("sps_trim_breaks")) {
+		$post = trim($post);
+		$post = str_replace("\n", "", $post);
+		$post = str_replace("\t", "", $post);
+	}
+	return $post;
+}
+
 
 /* Prints edit_page selector */
 function sps_admin_edit_page ()
@@ -410,7 +425,7 @@ function sps_get_archives($args = '') {
 				} else {
 					$text = sprintf('%s %d', $sps_prefix,$arcresult->year);
 				}
-				echo get_archives_link($url, $text, $format, $before, $after);
+				echo sps_trim_breaks(get_archives_link($url, $text, $format, $before, $after));
 			}
 		}
 	} else {
@@ -445,6 +460,7 @@ function sps_options() {
     $sps_standard_separator = "&nbsp;<strong>&raquo;</strong>&nbsp;";
     $sps_list_archives = 1;
     $sps_date_prefix = 0;
+    $sps_trim_breaks = 0;
     
     $sps_options = array (
     	"sps_sidebar_page_switcher",
@@ -454,7 +470,8 @@ function sps_options() {
     	"sps_navigation_row",
     	"sps_standard_separator",
     	"sps_list_archives",
-    	"sps_date_prefix");
+    	"sps_date_prefix",
+    	"sps_trim_breaks");
     /* Try to fetch a submit!
      * and update all the options afterwards
      */
@@ -509,6 +526,13 @@ function sps_options() {
 			<td>
 				<input name="sps_hierarchical_display" type="checkbox" value="1" align="right" <?php if (1 == $sps_hierarchical_display) {echo "checked";}?> />
 			    <?php print $sps_lang["SPSHierarchyText"]; ?>
+			</td>
+		  </tr>
+		  <tr valign="baseline">			
+			<th scope="row"><?php print $sps_lang["SPSTrimBreaks"]; ?>:</th>
+			<td>
+				<input name="sps_trim_breaks" type="checkbox" value="1" align="right" <?php if (1 == $sps_trim_breaks) {echo "checked";}?> />
+			    <?php print $sps_lang["SPSTrimBreaksText"]; ?>
 			</td>
 		  </tr>
 		</table>
@@ -657,6 +681,8 @@ if ( function_exists('register_widget_control') ) {
 add_action('edit_page_form', 'sps_admin_edit_page');
 add_action('edit_post', 'sps_manage_meta_data');
 add_filter('wp_list_pages_excludes', 'sps_pages_2_exclude', 1);
+add_filter('wp_list_pages', 'sps_trim_breaks', 1);
+add_filter('wp_list_categories', 'sps_trim_breaks', 1);
 /* Search Static Pages */
 add_filter('posts_request', 'sps_ssp_change_request', 1);
 /* Administration Form */
