@@ -4,7 +4,7 @@ Plugin Name: SPS-Suite
 Plugin URI: http://www.hobbingen.de/software/
 Description: Suite for Enhancing your 'static' pages and archives. Use the admin panel to activate the functions! This plugin is based on 'Sidebar Page Switcher'.'
 Author: Thorsten Werner
-Version: 1.3.1
+Version: 1.3.2
 Author URI: http://www.hobbingen.de/software/
 */
 /*
@@ -158,7 +158,7 @@ function sps_pages_2_exclude($exclusions)
 		$inclusions = "post_parent = '0' OR post_parent = '" . $post->ID . "'";
 		
 		/* Recursive from current level to top level (this is post_parent = 0) */
-		while ($post_parent <> "0") {
+		while (($post_parent <> "") && ($post_parent <> "0")) {
 			$inclusions .= " OR post_parent = '" . $post_parent . "'";
 			$page = get_page($post_parent);
 			$post_parent = $page->post_parent;
