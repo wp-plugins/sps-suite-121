@@ -55,7 +55,7 @@ No, this plugin is in English and German only, but you may add this easily trans
 Please contact me if there any issues with this plugin.<br />
 <br />
 <b>Version History:</b><br />
-1.3.3 corrected isues with standard language (english) in admin pages<br />
+1.3.3 corrected issues with standard language (english) in admin pages<br />
 1.3.2 corrected some issues with unknown pages<br />
 1.3.1 added support for widgets<br />
 1.3. initial release of the current stable trunk
