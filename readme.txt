@@ -11,8 +11,7 @@ Suite for enhancing your 'static' pages and archives. This plugin hides pages fr
 
 SPS-Suite is the successor of "SPS -Sidebar Page Switcher". It enhances your page-list and your archive-list in the sidebar as well as your search function. This plugin is useful for blogs with many static subpages and the wish of a small sidebar.<br />
 Please take a look at the screenshots or at the pages mentioned below for a better understandig of the plugin's functions.<br />
-<em>Now including a widget for your widget-ready sidebar.</em><br />
-<strong>Please note: This is a bgfixing release!</strong>
+<em>The plugin includes a widget for your widget-ready sidebar.</em><br />
 There are several options implemented in the plugin:<br />
 1. You can have the sidebar-page-list be more smart, e.g. only pages of the top level and all useful level are displayed, additionally you can hide pages from being displayed in the sidebar.<br />
 2. You can extend your search function with a fulltext index, this search uses articles and pages and is restricted to MySQL 4.0 or higher.<br />
@@ -53,9 +52,10 @@ No, this plugin is in English and German only, but you may add this easily trans
 
 == Arbitrary section ==
 
-Please contact me if there any issues with this plugin.
-
-<b>Version History:</b>
-1.3.2 bug fixing release, some issues with unknown pages
-1.3.1 added support for widgets
+Please contact me if there any issues with this plugin.<br />
+<br />
+<b>Version History:</b><br />
+1.3.3 corrected isues with standard language (english) in admin pages<br />
+1.3.2 corrected some issues with unknown pages<br />
+1.3.1 added support for widgets<br />
 1.3. initial release of the current stable trunk

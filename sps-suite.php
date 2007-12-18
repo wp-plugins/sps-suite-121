@@ -4,7 +4,7 @@ Plugin Name: SPS-Suite
 Plugin URI: http://www.hobbingen.de/software/
 Description: Suite for Enhancing your 'static' pages and archives. Use the admin panel to activate the functions! This plugin is based on 'Sidebar Page Switcher'.'
 Author: Thorsten Werner
-Version: 1.3.2
+Version: 1.3.3
 Author URI: http://www.hobbingen.de/software/
 */
 /*
@@ -68,7 +68,7 @@ if ( "de_DE" == WPLANG ) {
 		);
 } else {
 	/* i18n of the admin screen of sps */
-	$sps_switcher_lang = array (
+	$sps_lang = array (
 		"DisplaySettings" => "Display-settings",
 		"ThisPage" => "This page in sidebar: ",
 		"Show" => "show",
@@ -89,7 +89,7 @@ if ( "de_DE" == WPLANG ) {
 		"SPSUsage" => "Use Sidebar Page Switcher",
 		"SPSUsageText" => "Use the function &quot;sps_list_pages([...]);&quot; to active the plugin. Use the argument &quot;page_id='.$posts[0]->ID.'&quot; to enable the 2nd option.",
 		"SPSUsageText" => "If you activate this, then all hidden page are hidden.",
-		"SPSHierarchy" => "Usage of the hierarchy-funktion.",		
+		"SPSHierarchy" => "Usage of the hierarchy-funktion",
 		"SPSHierarchyText" => "If activated, WP displays only the hierarchically useful pages in the sidebar.",
 		"SPSTrimBreaks" => "Delete Breaks and Tabs",
 		"SPSTrimBreaksText" => "Every break and every tab in 1st the page-list, 2nd the sps-archive-list and 3rd the categroies-list will be deleted. This may avoid some presention-errors in the Internet Explorer . If you expierence any strange behavior with your theme in the IEx you should activate this option.",
