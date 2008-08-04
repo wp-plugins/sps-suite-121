@@ -11,7 +11,7 @@ Suite for enhancing your 'static' pages and archives. This plugin hides pages fr
 
 SPS-Suite is the successor of "SPS -Sidebar Page Switcher". It enhances your page-list and your archive-list in the sidebar as well as your search function. This plugin is useful for blogs with many static subpages and the wish of a small sidebar.<br />
 Please take a look at the screenshots or at the pages mentioned below for a better understandig of the plugin's functions.<br />
-<em>The plugin includes a widget for your widget-ready sidebar.</em><br />
+The plugin includes a widget for your widget-ready sidebar and <em>is now compatible up to WP 2.6.</em><br />
 There are several options implemented in the plugin:<br />
 1. You can have the sidebar-page-list be more smart, e.g. only pages of the top level and all useful level are displayed, additionally you can hide pages from being displayed in the sidebar.<br />
 2. You can extend your search function with a fulltext index, this search uses articles and pages and is restricted to MySQL 4.0 or higher.<br />
