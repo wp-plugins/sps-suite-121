@@ -2,7 +2,7 @@
 Contributors: SamGamdschie
 Tags: sidebar, admin, links, 
 Requires at least: 2.1.0
-Tested up to: 2.3
+Tested up to: 2.6
 Stable tag: trunk
 
 Suite for enhancing your 'static' pages and archives. This plugin hides pages from the page list, displays a navigation row and more.
@@ -55,6 +55,7 @@ No, this plugin is in English and German only, but you may add this easily trans
 Please contact me if there any issues with this plugin.<br />
 <br />
 <b>Version History:</b><br />
+1.3.4 corrected issues with query replacements for static pages (introduced by 2.5/2.6)
 1.3.3 corrected issues with standard language (english) in admin pages<br />
 1.3.2 corrected some issues with unknown pages<br />
 1.3.1 added support for widgets<br />

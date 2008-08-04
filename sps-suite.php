@@ -4,7 +4,7 @@ Plugin Name: SPS-Suite
 Plugin URI: http://www.hobbingen.de/software/
 Description: Suite for Enhancing your 'static' pages and archives. Use the admin panel to activate the functions! This plugin is based on 'Sidebar Page Switcher'.'
 Author: Thorsten Werner
-Version: 1.3.3
+Version: 1.3.4
 Author URI: http://www.hobbingen.de/software/
 */
 /*
@@ -278,16 +278,24 @@ function sps_ssp_change_request($text)
 {
 	global $wp_query;
 	global $wp_version;
+	global $table_prefix;
 
 	if (($wp_query->is_search) && (1 == get_option("sps_search_static_pages"))) {
-		/* STATIC PAGES */
+		/* ADD STATIC PAGES TO SEARCH */
+		/* HELPING OUTPUT
+		echo $text."<br />";/* */
 		if ($wp_version >= "2.1") {
 			$text = str_replace("post_type = 'post'", "(post_type = 'post' OR post_type = 'page')", $text);
 		} else {
 			$text = str_replace("AND post_status != 'static'", "OR post_status = 'static'", $text);
 		}
 		/* ORDER BY */
-		$text = str_replace("post_date DESC", "post_relevance DESC, post_date DESC", $text);
+		if (strstr($text,"BY ".$table_prefix."posts.")) {
+			/* DELETE wp_posts NEW to 2.5 */
+			$text = str_replace($table_prefix."posts.post_date DESC", "post_relevance DESC, ".$table_prefix."posts.post_date DESC", $text);
+		} else {
+			$text = str_replace("post_date DESC", "post_relevance DESC, post_date DESC", $text);
+		}
 		/* BUILD "MATCH AGAINST"*/
 		$q = $wp_query->query_vars;
 		$match = "MATCH (post_title, post_content) AGAINST ('".$q["s"]."')";
@@ -297,8 +305,7 @@ function sps_ssp_change_request($text)
 		$strFind = "(((post_title LIKE '%".$q["s"]."%') OR (post_content LIKE '%".$q["s"]."%')) OR (post_title LIKE '%".$q["s"]."%') OR (post_content LIKE '%".$q["s"]."%'))";
 		$text = str_replace($strFind, $match, $text);
 		/* HELPING OUTPUT
-		echo $text; 
-		//*/
+		echo $text."<br />";/* */
 	}
 	return $text;
 }
