@@ -4,7 +4,7 @@ Plugin Name: SPS-Suite
 Plugin URI: http://www.hobbingen.de/software/
 Description: Suite for Enhancing your 'static' pages and archives. Use the admin panel to activate the functions! This plugin is based on 'Sidebar Page Switcher'.'
 Author: Thorsten Werner
-Version: 1.3.4
+Version: 1.4.0
 Author URI: http://www.hobbingen.de/software/
 */
 /*
@@ -46,7 +46,7 @@ if ( "de_DE" == WPLANG ) {
 		"SPSTrimBreaks" => "L&ouml;sche Umbr&uuml;che und Tabstops",
 		"SPSTrimBreaksText" => "Es werden alle Umbr&uuml;che und Tabstops aus 1. der Seitenliste, 2. der SPS-Archivliste und der 3. Kategorieliste abgefangen und gel&ouml;scht. Dies verhindert Fehler bei der Darstellung von Listen im Internet Explorer. Solltest Du im IEx Probleme mit der Listendarstellung haben, dann aktiviere diese Option.",
 		"SPSMinUserLevel" => "Niedrigste Benutzerrolle",
-		"SPSMinUserLevelText" => "Benutzer ein Ziffer; 5 = Herausgeber, 8 = Administrator. Dies ist eine Sicherheitsfunktion!",
+		"SPSMinUserLevelText" => "Benutze ein Ziffer; 5 = Herausgeber, 8 = Administrator. Dies ist eine Sicherheitsfunktion!",
 		"SSP" => "SPS - Suche in Seiten",
 		"SSPText" => "Die Funktion erweitert Deine Wordpress-Suche um Beitr&auml;ge <strong>und Seiten</strong> mit einem Fulltext-Index. Die gefundenen Artikel werden nach ihrer Suchrelevanz sortiert (aus MySQL-Funktionen). Diese Suchrelevanz kannst Du auch Anzeigen mit &quot;relevance&quot;. Das mag Benutzern helfen die Suchergebnisse einzuordnen.",
 		"SSPUsage" => "Benutze Suche in Seiten",
@@ -142,7 +142,7 @@ function sps_pages_2_exclude($exclusions)
 	global $wpdb;
 	global $post;
 	/* Exclude pages with metadata "_sps_show_in_sidebar" = off */
-	$sps_pages = $wpdb->get_results("SELECT post_id " . "FROM $wpdb->postmeta " . "WHERE meta_key = '_sps_show_in_sidebar' " . "AND meta_value = 'off' ");
+	$sps_pages = $wpdb->get_results("SELECT post_id " . "FROM $wpdb->postmeta " . "WHERE meta_key = '_sps_show_in_sidebar' " . "AND ( meta_value = 'off' OR meta_value = 'hide' )");
 	if ( (is_array($sps_pages)) && (1 == get_option("sps_sidebar_page_switcher")) ) {
 		foreach ($sps_pages as $sps_page) {
 			$exclusions[] = $sps_page->post_id;
@@ -198,11 +198,36 @@ function sps_trim_breaks($post){
 	return $post;
 }
 
+function sps_meta() {
+	global $post;
+	global $sps_lang;
+	$disabled = "";
+	if (0 >= $post->ID) {
+		$disabled = "disabled=\"disabled\"";
+	}
+	?>
+	<strong><?php print $sps_lang["ThisPage"]; ?></strong>
+	<select name="sps_show_page" <?php print $disabled; ?> >
+	<?php	if ( ("off" == get_post_meta($post->ID,'_sps_show_in_sidebar',true)) || ("hide" == get_post_meta($post->ID,'_sps_show_in_sidebar',true)) ) { ?>
+		<option value="hide" selected="selected"><?php print $sps_lang["Hide"]; ?></option>
+		<option value="show"><?php print $sps_lang["Show"]; ?></option>
+	<?php	} else { ?>
+		<option value="show" selected="selected"><?php print $sps_lang["Show"]; ?></option>
+		<option value="hide"><?php print $sps_lang["Hide"]; ?></option>
+	<?php	} ?>
+	</select>
+<?php
+}
+function sps_meta_box() {
+	global $sps_lang;
+	add_meta_box('sps_suite',$sps_lang['DisplaySettings'],'sps_meta','page','side');
+}
 
 /* Prints edit_page selector */
 function sps_admin_edit_page ()
 {
 	global $wpdb;
+	global $wp_version;
 	global $user_level;
 	global $post_ID;
 	global $sps_lang;
@@ -224,8 +249,11 @@ function sps_admin_edit_page ()
         } else {
         	$disabled = "disabled=\"disabled\"";
         }
-		print '
-<fieldset id="pageswitcher">
+
+	
+	print $wp_version;
+	print '
+ <fieldset id="pageswitcher">
 	<legend>' . $sps_lang["DisplaySettings"] . '</legend>
 	<strong>' . $sps_lang["ThisPage"] . '</strong>
 	<select name="sps_show_page" ' . $disabled . '>';
@@ -250,7 +278,7 @@ function sps_admin_edit_page ()
 			if (!empty($pages)) {
 				$sql = "UPDATE $wpdb->postmeta SET " . "post_id = '$postId', " . "meta_key = '_sps_show_in_sidebar', " . "meta_value = '" . $_POST["sps_show_page"] . "' " . "WHERE meta_id = '" . $pages[0]->meta_id . "' ";
 			} else {
-				if ("off" == $_POST["sps_show_page"]) {
+				if ("hide" == $_POST["sps_show_page"]) {
 					$sql = "INSERT INTO $wpdb->postmeta " . "(meta_id, post_id, meta_key, meta_value) " . "VALUES (NULL, '$postId', '_sps_show_in_sidebar', '" . $_POST["sps_show_page"] . "')";
 				} 
 			} 
@@ -685,7 +713,12 @@ if ( function_exists('register_widget_control') ) {
 }
 /* Actions and Filters for Wordpress */
 /* Sidebar Page Switcher */
+if (2.6 > $wp_version) {
 add_action('edit_page_form', 'sps_admin_edit_page');
+} else {
+//add_action('edit_page_form', 'sps_admin_edit_page');
+add_action('admin_menu', 'sps_meta_box');
+} //wp_version
 add_action('edit_post', 'sps_manage_meta_data');
 add_filter('wp_list_pages_excludes', 'sps_pages_2_exclude', 1);
 add_filter('wp_list_pages', 'sps_trim_breaks', 1);
